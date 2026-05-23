@@ -12,6 +12,7 @@ import {
   hasSeqField,
   localName,
   normalizeExistingTocFields,
+  scanParagraphSiblings,
   TABLE_OF_FIGURES_FIELD,
   TABLE_OF_TABLES_FIELD,
   TOC_FIELD,
@@ -57,19 +58,22 @@ async function insertAssetCaptions(zip: JSZip, xmlDoc: Document, body: Element, 
   for (const node of walkCaptionBlocks(body)) {
     if (localName(node) === 'p') {
       const images = await extractParagraphImages(node, imageRelationships, zip);
-      for (const _image of images) {
+      let insertAfter: Node = node;
+      for (const [_index, _image] of images.entries()) {
         const element = processed.content.find((item) => item.type === 'image' && item.id === `fig-${figureIndex}`);
         if (element?.type === 'image' && !element.excluded && element.caption) {
           const parent = getElementParent(node);
           const captionNode = createCaptionParagraph(xmlDoc, 'Figure', element.caption, processed.typography, element.order + 1);
-          const existingCaption = findNearbyCaptionParagraph(node, 'Figure', 0, 3);
+          const existingCaption = _index === 0 ? findNearbyCaptionParagraph(node, 'Figure', 0, 3) : undefined;
           if (existingCaption && !hasSeqField(existingCaption, 'Figure')) {
             existingCaption.parentNode?.replaceChild(captionNode, existingCaption);
+            insertAfter = captionNode;
           } else if (!existingCaption) {
             if (processed.figureCaptionPlacement === 'above') {
               parent.insertBefore(captionNode, node);
             } else {
-              parent.insertBefore(captionNode, node.nextSibling);
+              parent.insertBefore(captionNode, insertAfter.nextSibling);
+              insertAfter = captionNode;
             }
           }
         }
@@ -82,7 +86,7 @@ async function insertAssetCaptions(zip: JSZip, xmlDoc: Document, body: Element, 
       if (element?.type === 'table' && !element.excluded && element.caption) {
         const parent = getElementParent(node);
         const captionNode = createCaptionParagraph(xmlDoc, 'Table', element.caption, processed.typography, element.order + 1);
-        const existingCaption = findNearbyCaptionParagraph(node, 'Table', 3, 3);
+        const existingCaption = findTableCaptionParagraph(node, processed.tableCaptionPlacement);
         if (existingCaption && !hasSeqField(existingCaption, 'Table')) {
           existingCaption.parentNode?.replaceChild(captionNode, existingCaption);
         } else if (!existingCaption) {
@@ -96,6 +100,14 @@ async function insertAssetCaptions(zip: JSZip, xmlDoc: Document, body: Element, 
       tableIndex += 1;
     }
   }
+}
+
+function findTableCaptionParagraph(node: Element, placement: ProcessedDoc['tableCaptionPlacement']): Element | undefined {
+  if (placement === 'below') {
+    return scanParagraphSiblings(node, 'Table', 'nextSibling', 3) ?? scanParagraphSiblings(node, 'Table', 'previousSibling', 1);
+  }
+
+  return scanParagraphSiblings(node, 'Table', 'previousSibling', 1) ?? scanParagraphSiblings(node, 'Table', 'nextSibling', 3);
 }
 
 function walkCaptionBlocks(container: Element): Element[] {
@@ -556,8 +568,25 @@ function isBefore(node: Node, other: Node): boolean {
 
 function findInsertionAnchor(body: Element): Node | null {
   const children = childElements(body);
+  const mainContentStart = findMainContentStart(children);
+  if (mainContentStart) return getPreviousBodyElement(mainContentStart);
+
   const coverBreak = children.find((node) => localName(node) === 'p' && (hasPageBreak(node) || hasSectionBreak(node)));
   return coverBreak ?? children.find((node) => localName(node) === 'p') ?? children[0] ?? null;
+}
+
+function findMainContentStart(children: Element[]): Element | undefined {
+  return children.find((node, index) => {
+    if (localName(node) !== 'p') return false;
+    if (index < 3) return false;
+    const text = getParagraphText(node);
+    if (!text || classifyGlobalFieldTitle(text) || getFieldInstructionText(node)) return false;
+    if (hasPageBreak(node) || hasSectionBreak(node)) return false;
+    if (/^references$/i.test(text)) return false;
+    if (/^appendix\b/i.test(text)) return false;
+    if (/^(\d+(\.\d+)*\.?\s+)?(abstract|introduction|background|overview)\b/i.test(text)) return true;
+    return /^\d+(\.\d+)*\.?\s+\S/.test(text) && !/^\d{4}\b/.test(text);
+  });
 }
 
 function hasPageBreak(paragraph: Element): boolean {

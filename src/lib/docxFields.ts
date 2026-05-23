@@ -143,6 +143,8 @@ export function createFieldSection(doc: Document, title: string, instruction: st
   const p = doc.createElementNS(W_NS, 'w:p');
   p.appendChild(createFieldCharRun(doc, 'begin', true));
   p.appendChild(createInstrRun(doc, instruction));
+  p.appendChild(createFieldCharRun(doc, 'separate'));
+  p.appendChild(createTextRun(doc, 'Right-click and update field.'));
   p.appendChild(createFieldCharRun(doc, 'end'));
   fragment.appendChild(p);
   return fragment;

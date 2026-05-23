@@ -47,6 +47,7 @@ export function startsLikeCaption(text: string, kind: CaptionKind): boolean {
   if (kind === 'Figure') {
     return /^(figure|fig\.)\s*(\d+|[ivxlcdm]+)?\s*[:.)-]?/i.test(trimmed);
   }
+  if (/^table of (contents|figures|tables)\b/i.test(trimmed)) return false;
   return /^table\s*(\d+|[ivxlcdm]+)?\s*[:.)-]?/i.test(trimmed);
 }
 

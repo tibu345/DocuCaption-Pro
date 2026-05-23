@@ -25,6 +25,7 @@ async function main() {
     title: 'regression-source',
     content: [
       { type: 'image', id: 'fig-0', order: 0, src: '', alt: 'local file path', caption: 'Figure 1: C:\\Users\\someone\\Desktop\\part1.png' },
+      { type: 'image', id: 'fig-1', order: 1, src: '', alt: 'second image', caption: 'Figure 2: Secondary circuit detail' },
       { type: 'table', id: 'tab-0', order: 0, rows: [['Kp', 'Rise time']], caption: 'Table 1: Control response summary' },
     ],
     toc: true,
@@ -45,7 +46,11 @@ async function main() {
   assert(documentXml.includes('TOC \\o &quot;1-3&quot; \\h \\z \\u') || documentXml.includes('TOC \\o "1-3" \\h \\z \\u'), 'Expected Table of Contents field');
   assert(documentXml.includes('TOC \\h \\z \\c &quot;Figure&quot;') || documentXml.includes('TOC \\h \\z \\c "Figure"'), 'Expected List of Figures field');
   assert(documentXml.includes('TOC \\h \\z \\c &quot;Table&quot;') || documentXml.includes('TOC \\h \\z \\c "Table"'), 'Expected List of Tables field');
+  assert(documentXml.includes('Table of Contents'), 'Expected Table of Contents title to be preserved');
+  assert(documentXml.indexOf('Table of Contents') < documentXml.indexOf('Introduction'), 'Expected global fields before the first main heading');
+  assert((documentXml.match(/fldCharType="separate"/g) ?? []).length >= 3, 'Expected updateable global fields with result separators');
   assert(documentXml.includes('SEQ Figure'), 'Expected native Figure SEQ field');
+  assert((documentXml.match(/SEQ Figure/g) ?? []).length >= 2, 'Expected captions for multiple images in one paragraph');
   assert(documentXml.includes('SEQ Table'), 'Expected native Table SEQ field');
   assert(!/C:\\Users\\/i.test(documentXml), 'Expected local file paths to be removed from captions');
   assert(!/w:start="0"|w:start='0'/.test(documentXml), 'Expected invalid zero page numbering to be removed');
@@ -75,10 +80,14 @@ async function createSourceDocx(): Promise<Uint8Array> {
       xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
       xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
       xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
-      <w:body>
+        <w:body>
         <w:p><w:r><w:t>Cover Page</w:t></w:r><w:r><w:br w:type="page"/></w:r></w:p>
+        <w:tbl><w:tr><w:tc><w:p><w:r><w:t>Student</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>Section</w:t></w:r></w:p></w:tc></w:tr></w:tbl>
         <w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="32"/></w:rPr><w:t>Introduction</w:t></w:r></w:p>
-        <w:p><w:r><w:drawing><wp:inline><wp:docPr id="1" name="Picture 1" descr="Architecture diagram"/><a:graphic><a:graphicData><pic:pic><pic:blipFill><a:blip r:embed="rIdImage1"/></pic:blipFill></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>
+        <w:p>
+          <w:r><w:drawing><wp:inline><wp:docPr id="1" name="Picture 1" descr="Architecture diagram"/><a:graphic><a:graphicData><pic:pic><pic:blipFill><a:blip r:embed="rIdImage1"/></pic:blipFill></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>
+          <w:r><w:drawing><wp:inline><wp:docPr id="2" name="Picture 2" descr="Secondary detail"/><a:graphic><a:graphicData><pic:pic><pic:blipFill><a:blip r:embed="rIdImage2"/></pic:blipFill></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>
+        </w:p>
         <w:p><w:r><w:t>Figure 1: C:\\Users\\someone\\Desktop\\part1.png</w:t></w:r></w:p>
         <w:tbl><w:tr><w:tc><w:p><w:r><w:t>Kp</w:t></w:r></w:p></w:tc><w:tc><w:p><w:r><w:t>Rise time</w:t></w:r></w:p></w:tc></w:tr></w:tbl>
         <w:sectPr><w:pgNumType w:start="0"/></w:sectPr>
@@ -90,9 +99,11 @@ async function createSourceDocx(): Promise<Uint8Array> {
     `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
       <Relationship Id="rIdImage1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image1.png"/>
+      <Relationship Id="rIdImage2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image2.png"/>
     </Relationships>`,
   );
   zip.file('word/media/image1.png', pngBytes);
+  zip.file('word/media/image2.png', pngBytes);
   return zip.generateAsync({ type: 'uint8array' });
 }
 
