@@ -1,0 +1,17 @@
+{
+  "name": "DocuCaption Pro",
+  "short_name": "DocuCaption",
+  "description": "Word document captioning and DOCX export tool.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
