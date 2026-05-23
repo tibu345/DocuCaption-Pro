@@ -297,15 +297,15 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
-        <div className="mx-auto flex min-h-16 max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between md:py-0">
-          <button onClick={() => setPage('landing')} className="flex shrink-0 items-center gap-3">
-            <span className="w-9 h-9 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex min-h-16 max-w-7xl flex-col gap-3 px-3 py-3 sm:px-6 md:flex-row md:items-center md:justify-between md:py-0">
+          <button onClick={() => setPage('landing')} className="flex min-w-0 shrink-0 items-center gap-3 text-left">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
               <FileText className="w-5 h-5" />
             </span>
-            <span className="text-lg font-bold">DocuCaption Pro</span>
+            <span className="truncate text-base font-bold sm:text-lg">DocuCaption Pro</span>
           </button>
-          <nav className="flex w-full items-center gap-1 overflow-x-auto pb-1 text-sm md:w-auto md:pb-0">
+          <nav className="-mx-1 flex w-[calc(100%+0.5rem)] items-center gap-1 overflow-x-auto px-1 pb-1 text-sm [scrollbar-width:none] md:mx-0 md:w-auto md:pb-0 [&::-webkit-scrollbar]:hidden">
             {(['process', 'audit', 'export', 'account', 'privacy'] as Page[]).map((item) => (
               <button key={item} onClick={() => setPage(item)} className={`nav-pill ${page === item ? 'nav-pill-active' : ''}`}>
                 {item}
@@ -315,8 +315,8 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        {message && <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">{message}</div>}
+      <main className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-8">
+        {message && <div className="mb-5 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm leading-6 text-blue-900 sm:mb-6 sm:p-4">{message}</div>}
         {page === 'landing' && <LandingPage signedIn={signedIn} captionCredits={getRemainingCaptionCredits(user)} onStart={() => signedIn ? setPage('process') : setShowAuthPrompt(true)} />}
         {page === 'process' && (
           <ProcessPage
@@ -394,34 +394,34 @@ export default function App() {
 
 function LandingPage({ signedIn, captionCredits, onStart }: { signedIn: boolean; captionCredits: number; onStart: () => void }) {
   return (
-    <section className="space-y-10">
-      <div className="grid min-h-[calc(100vh-12rem)] items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+    <section className="space-y-8 sm:space-y-10">
+      <div className="grid items-center gap-6 py-3 sm:gap-8 sm:py-6 lg:min-h-[calc(100vh-12rem)] lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <p className="text-sm font-bold text-blue-600 uppercase tracking-widest">Document automation for Word</p>
-          <h1 className="mt-4 max-w-4xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">Upload a report. Generate captions for every figure and table. Export a clean Word file.</h1>
-          <p className="mt-6 max-w-2xl text-base text-slate-600 sm:text-lg">
+          <p className="text-xs font-bold uppercase tracking-widest text-blue-600 sm:text-sm">Document automation for Word</p>
+          <h1 className="mt-4 max-w-4xl text-4xl font-bold leading-[1.06] tracking-normal sm:text-5xl lg:text-6xl">Upload a report. Generate captions for every figure and table. Export a clean Word file.</h1>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:mt-6 sm:text-lg">
             DocuCaption fixes captions, Tables of Figures, Tables of Tables, and report structure before submission.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <button onClick={onStart} className="primary-button">
+          <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
+            <button onClick={onStart} className="primary-button w-full sm:w-auto">
               <Upload className="w-4 h-4" /> {signedIn ? 'Start processing' : 'Start free'}
             </button>
           </div>
-          <div className="mt-6 flex flex-wrap gap-3 text-sm">
+          <div className="mt-5 flex flex-wrap gap-2 text-sm sm:mt-6 sm:gap-3">
             <span className="badge">{signedIn ? `${captionCredits} caption credits left` : 'Free account required'}</span>
             <span className="badge">Word-native SEQ fields</span>
             <span className="badge">No PDF downgrade</span>
           </div>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-          <div className="rounded-lg bg-blue-50 border border-blue-100 p-5">
+        <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm sm:p-6">
+          <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 sm:p-5">
             <div className="text-xs font-bold uppercase tracking-wider text-blue-700">Automation sequence</div>
             <div className="mt-4 grid gap-3">
               {['Detect figures and tables', 'Generate captions', 'Prevent duplicate captions', 'Build TOC + figure/table lists', 'Export corrected DOCX'].map((item, index) => (
                 <div key={item} className="flex min-w-0 items-center gap-3 rounded border border-blue-100 bg-white p-3">
-                  <span className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">{index + 1}</span>
-                  <span className="min-w-0 text-sm font-semibold">{item}</span>
-                  {index < 4 && <ArrowRight className="ml-auto w-4 h-4 text-blue-300" />}
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">{index + 1}</span>
+                  <span className="min-w-0 flex-1 text-sm font-semibold leading-5">{item}</span>
+                  {index < 4 && <ArrowRight className="ml-auto hidden h-4 w-4 shrink-0 text-blue-300 sm:block" />}
                 </div>
               ))}
             </div>
@@ -439,9 +439,9 @@ function LandingPage({ signedIn, captionCredits, onStart }: { signedIn: boolean;
 
 function ValueCard({ title, value, detail }: { title: string; value: string; detail: string }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
       <div className="text-xs font-bold uppercase tracking-wider text-slate-400">{title}</div>
-      <div className="mt-2 text-2xl font-bold">{value}</div>
+      <div className="mt-2 text-xl font-bold sm:text-2xl">{value}</div>
       <p className="mt-2 text-sm text-slate-600">{detail}</p>
     </div>
   );
@@ -453,21 +453,21 @@ function CheckIcon() {
 
 function AuthPromptModal({ children, onClose }: { children: ReactNode; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/40 px-3 py-4 backdrop-blur-sm sm:px-4 sm:py-8" role="dialog" aria-modal="true" aria-label="Account sign in">
-      <div className="relative w-full max-w-5xl rounded-2xl bg-slate-50 p-3 shadow-2xl ring-1 ring-white/30 sm:p-5">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/40 px-2 py-3 backdrop-blur-sm sm:px-4 sm:py-8" role="dialog" aria-modal="true" aria-label="Account sign in">
+      <div className="relative w-full max-w-5xl rounded-xl bg-slate-50 p-3 shadow-2xl ring-1 ring-white/30 sm:rounded-2xl sm:p-5">
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-500 shadow-sm hover:text-slate-900"
+          className="absolute right-3 top-3 z-10 min-h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-500 shadow-sm hover:text-slate-900 sm:right-4 sm:top-4"
           aria-label="Continue without signing in for now"
         >
           Later
         </button>
         <div className="mb-4 overflow-hidden rounded-xl border border-blue-100 bg-white">
           <div className="flex flex-col gap-4 bg-blue-50 px-4 py-4 pr-20 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-            <div>
+            <div className="min-w-0">
               <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Free account</p>
-              <p className="mt-1 text-sm text-blue-950">Sign in once to process documents, generate captions, and export corrected Word files.</p>
+              <p className="mt-1 text-sm leading-6 text-blue-950">Sign in once to process documents, generate captions, and export corrected Word files.</p>
             </div>
             <div className="hidden gap-2 text-[10px] font-bold uppercase tracking-wider text-emerald-700 md:flex">
               <span className="badge">Secure workspace</span>
@@ -496,7 +496,7 @@ function ProcessPage(props: {
   onUpdateCaption: (id: string, caption: string) => void;
 }) {
   return (
-    <section className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
+    <section className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)] xl:gap-6">
       <aside className="space-y-4 xl:sticky xl:top-24 xl:self-start">
         <SectionTitle title="Upload / Process" subtitle="Import a Word document, review detected assets, then generate or edit captions." />
         <input ref={props.fileInputRef} type="file" accept=".docx" onChange={props.onUpload} className="hidden" />
@@ -525,11 +525,11 @@ function ProcessPage(props: {
             <article key={element.id} className="overflow-hidden rounded-lg border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
               <div className="flex items-start justify-between gap-3 sm:items-center">
                 <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold uppercase text-slate-500">
-                  {element.type === 'image' ? <ImageIcon className="w-4 h-4" /> : <TableIcon className="w-4 h-4" />}
-                  {element.type === 'image' ? `Figure ${element.order + 1}` : `Table ${element.order + 1}`}
+                  {element.type === 'image' ? <ImageIcon className="h-4 w-4 shrink-0" /> : <TableIcon className="h-4 w-4 shrink-0" />}
+                  <span>{element.type === 'image' ? `Figure ${element.order + 1}` : `Table ${element.order + 1}`}</span>
                   {element.hasExistingCaption && <span className="badge">Existing caption</span>}
                 </div>
-                <button onClick={() => props.onToggleExclusion(element.id)} className="icon-button" title="Exclude from export">
+                <button onClick={() => props.onToggleExclusion(element.id)} className="icon-button shrink-0" title="Exclude from export">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -537,7 +537,7 @@ function ProcessPage(props: {
               <input
                 value={element.caption ?? ''}
                 onChange={(event) => props.onUpdateCaption(element.id, event.target.value)}
-                className="mt-4 w-full border-b border-dashed border-slate-300 focus:border-blue-600 focus:border-solid outline-none text-sm py-2 bg-transparent text-center font-serif italic"
+                className="mt-4 w-full border-b border-dashed border-slate-300 bg-transparent py-3 text-center font-serif text-base italic outline-none focus:border-solid focus:border-blue-600 sm:text-sm"
                 placeholder={element.type === 'image' ? 'Figure: Add description' : 'Table: Add description'}
               />
             </article>
@@ -589,10 +589,10 @@ function ExportPage(props: {
   const exportDisabled = !props.hasDocument || props.remainingExports <= 0;
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-6">
       <div className="min-w-0">
         <SectionTitle title="Export" subtitle="Create a corrected Word copy with Word-native captions and fields." />
-        <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-4">
+        <div className="space-y-4 rounded-lg border border-slate-200 bg-white p-4 sm:p-6">
           <Toggle label="Create/update Table of Contents" checked={props.settings.toc} onChange={(toc) => props.setSettings((current) => ({ ...current, toc }))} />
           <Toggle label="Create/update Table of Figures" checked={props.settings.listFigures} onChange={(listFigures) => props.setSettings((current) => ({ ...current, listFigures }))} />
           <Toggle label="Create/update Table of Tables" checked={props.settings.listTables} onChange={(listTables) => props.setSettings((current) => ({ ...current, listTables }))} />
@@ -600,7 +600,7 @@ function ExportPage(props: {
             <SelectSetting label="Figure captions" value={props.settings.figureCaptionPlacement} options={[['below', 'Below'], ['above', 'Above']]} onChange={(value) => props.setSettings((current) => ({ ...current, figureCaptionPlacement: value }))} />
             <SelectSetting label="Table captions" value={props.settings.tableCaptionPlacement} options={[['above', 'Above'], ['below', 'Below']]} onChange={(value) => props.setSettings((current) => ({ ...current, tableCaptionPlacement: value }))} />
           </div>
-          <button onClick={props.onExportDocx} disabled={exportDisabled || props.isExportingDocx} className="primary-button justify-center">
+          <button onClick={props.onExportDocx} disabled={exportDisabled || props.isExportingDocx} className="primary-button w-full justify-center sm:w-auto">
             {props.isExportingDocx ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             Export captioned .docx
           </button>
@@ -641,13 +641,13 @@ function AccountPage(props: {
   const plan = getPlan(props.user.planId);
   const signedIn = isAuthenticated(props.user);
   return (
-    <section className="grid items-start gap-6 lg:grid-cols-[minmax(320px,420px)_minmax(0,1fr)]">
+    <section className="grid items-start gap-5 lg:grid-cols-[minmax(320px,420px)_minmax(0,1fr)] lg:gap-6">
       <div className="auth-card">
         <div>
           <div className="w-11 h-11 rounded-lg bg-blue-600 text-white flex items-center justify-center mb-5">
             <User className="w-5 h-5" />
           </div>
-          <h2 className="text-2xl font-bold">{signedIn ? 'Your account' : props.authMode === 'signup' ? 'Create your free account' : 'Sign in'}</h2>
+          <h2 className="text-xl font-bold sm:text-2xl">{signedIn ? 'Your account' : props.authMode === 'signup' ? 'Create your free account' : 'Sign in'}</h2>
           <p className="mt-2 text-sm text-slate-600">
             {signedIn
               ? 'Manage your document automation usage.'
@@ -659,9 +659,9 @@ function AccountPage(props: {
 
         {signedIn ? (
           <div className="space-y-4">
-            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+            <div className="min-w-0 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
               <div className="text-xs font-bold uppercase tracking-wider text-emerald-700">Signed in</div>
-              <div className="mt-1 text-sm font-semibold text-emerald-950">{props.user.email}</div>
+              <div className="mt-1 break-words text-sm font-semibold text-emerald-950">{props.user.email}</div>
             </div>
             <button onClick={props.onSignOut} className="toolbar-button justify-center w-full">
               Sign out
@@ -675,12 +675,12 @@ function AccountPage(props: {
                   <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
                     <CheckIcon />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="text-sm font-bold">One quick step</h3>
                     <p className="mt-1 text-sm leading-6">
                       We sent a secure sign-in link to <strong>{props.pendingVerificationEmail}</strong>. Open it to finish setting up your account.
                     </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-3 grid gap-2 sm:flex sm:flex-wrap">
                       <button
                         type="button"
                         onClick={() => props.setPendingVerificationEmail('')}
@@ -772,17 +772,17 @@ function AccountPage(props: {
           </div>
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-          <p className="text-sm font-bold text-blue-600 uppercase tracking-widest">Document automation for Word</p>
-          <h1 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl">Sign in to start fixing Word reports.</h1>
-          <p className="mt-4 text-slate-600">
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+          <p className="text-xs font-bold uppercase tracking-widest text-blue-600 sm:text-sm">Document automation for Word</p>
+          <h1 className="mt-4 text-2xl font-bold leading-tight sm:text-4xl">Sign in to start fixing Word reports.</h1>
+          <p className="mt-4 leading-7 text-slate-600">
             Your account keeps document usage, caption generation, and exports connected securely across sessions.
           </p>
           <div className="mt-6 grid gap-3">
             {['Detect figures and tables', 'Generate editable captions', 'Export corrected DOCX'].map((item, index) => (
-              <div key={item} className="flex items-center gap-3 rounded bg-blue-50 border border-blue-100 p-3">
-                <span className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">{index + 1}</span>
-                <span className="text-sm font-semibold">{item}</span>
+              <div key={item} className="flex items-center gap-3 rounded border border-blue-100 bg-blue-50 p-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">{index + 1}</span>
+                <span className="min-w-0 text-sm font-semibold leading-5">{item}</span>
               </div>
             ))}
           </div>
@@ -812,8 +812,8 @@ function PrivacyPage() {
 function AssetPreview({ element }: { element: Extract<DocElement, { type: 'image' | 'table' }> }) {
   if (element.type === 'image') {
     return (
-      <div className="mt-4 flex justify-center rounded border border-slate-100 bg-slate-50 p-3 sm:p-4">
-        {element.src ? <img src={element.src} alt={`Figure ${element.order + 1}`} className="max-h-[55vh] max-w-full object-contain" /> : <span className="text-sm text-slate-400">Image preview unavailable</span>}
+      <div className="mt-4 flex justify-center rounded border border-slate-100 bg-slate-50 p-2 sm:p-4">
+        {element.src ? <img src={element.src} alt={`Figure ${element.order + 1}`} className="max-h-[48vh] max-w-full object-contain sm:max-h-[55vh]" /> : <span className="text-sm text-slate-400">Image preview unavailable</span>}
       </div>
     );
   }
@@ -851,16 +851,16 @@ function PrivacyNotice({ compact = false }: { compact?: boolean }) {
 
 function SectionTitle({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div>
-      <h2 className="text-2xl font-bold capitalize">{title}</h2>
-      <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+    <div className="min-w-0">
+      <h2 className="text-xl font-bold capitalize sm:text-2xl">{title}</h2>
+      <p className="mt-1 text-sm leading-6 text-slate-500">{subtitle}</p>
     </div>
   );
 }
 
 function EmptyState({ label = 'Upload a .docx to detect figures, tables, captions, and Word fields.' }: { label?: string }) {
   return (
-    <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500 sm:p-12">
+    <div className="rounded-lg border border-dashed border-slate-300 bg-white p-6 text-center text-sm leading-6 text-slate-500 sm:p-12 sm:text-base">
       <FileText className="w-10 h-10 mx-auto mb-3 text-slate-300" />
       {label}
     </div>
@@ -869,9 +869,9 @@ function EmptyState({ label = 'Upload a .docx to detect figures, tables, caption
 
 function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (checked: boolean) => void }) {
   return (
-    <label className="flex items-center justify-between text-sm text-slate-600">
-      {label}
-      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="accent-blue-600" />
+    <label className="flex min-h-11 items-center justify-between gap-4 text-sm text-slate-600">
+      <span className="min-w-0 leading-5">{label}</span>
+      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="h-5 w-5 shrink-0 accent-blue-600" />
     </label>
   );
 }

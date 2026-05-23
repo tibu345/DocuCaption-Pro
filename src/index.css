@@ -7,17 +7,36 @@
   --font-serif: "Playfair Display", serif;
 }
 
+@layer base {
+  html,
+  body,
+  #root {
+    min-width: 0;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+}
+
 @layer components {
   .toolbar-button {
-    @apply px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md text-sm font-medium transition-colors border border-slate-300 flex items-center gap-2 disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-slate-300 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200 disabled:pointer-events-none disabled:opacity-50;
   }
 
   .primary-button {
-    @apply px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium shadow-md shadow-blue-100 transition-all flex items-center gap-2 disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md shadow-blue-100 transition-all hover:bg-blue-700 disabled:pointer-events-none disabled:shadow-none disabled:opacity-50;
   }
 
   .export-button {
-    @apply w-full py-3 bg-white border border-slate-300 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-50 flex items-center justify-center gap-2 transition-all shadow-sm active:scale-[0.98] disabled:opacity-30 disabled:pointer-events-none;
+    @apply flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-30;
   }
 
   .form-label {
@@ -25,11 +44,11 @@
   }
 
   .form-control {
-    @apply text-sm normal-case font-normal text-slate-800 border border-slate-200 rounded-md px-3 py-2.5 bg-white outline-none w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-100;
+    @apply min-h-11 w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-base font-normal normal-case text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm;
   }
 
   .nav-pill {
-    @apply px-3 py-2 rounded-md capitalize text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors;
+    @apply min-h-10 shrink-0 rounded-md px-3 py-2 text-sm capitalize text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900;
   }
 
   .nav-pill-active {
@@ -41,7 +60,7 @@
   }
 
   .metric-card {
-    @apply bg-white border border-slate-200 rounded-lg p-5 shadow-sm flex flex-col gap-2;
+    @apply flex min-w-0 flex-col gap-2 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-5;
   }
 
   .metric-card span {
@@ -49,7 +68,7 @@
   }
 
   .metric-card strong {
-    @apply text-2xl font-bold text-slate-900;
+    @apply break-words text-xl font-bold text-slate-900 sm:text-2xl;
   }
 
   .icon-button {
@@ -57,11 +76,11 @@
   }
 
   .auth-card {
-    @apply bg-white border border-slate-200 rounded-lg p-7 shadow-sm space-y-6;
+    @apply space-y-6 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6 lg:p-7;
   }
 
   .google-button {
-    @apply w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm hover:bg-slate-50 transition-colors;
+    @apply min-h-12 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm transition-colors hover:bg-slate-50;
   }
 
   .auth-divider {
