@@ -284,6 +284,24 @@ export default function App() {
     setMessage('Signed out.');
   }
 
+  const accountPageProps: AccountPageProps = {
+    user,
+    authMode,
+    pendingVerificationEmail,
+    email,
+    password,
+    confirmPassword,
+    setAuthMode,
+    setPendingVerificationEmail,
+    setEmail,
+    setPassword,
+    setConfirmPassword,
+    onSignIn: handleSignIn,
+    onSignUp: handleSignUp,
+    onGoogleSignIn: handleGoogleSignIn,
+    onSignOut: handleSignOut,
+  };
+
   function updateCaption(id: string, caption: string) {
     setElements((current) =>
       current.map((element) => ((element.type === 'table' || element.type === 'image') && element.id === id ? { ...element, caption } : element)),
@@ -347,47 +365,12 @@ export default function App() {
             remainingExports={getRemainingExports(user)}
           />
         )}
-        {page === 'account' && (
-          <AccountPage
-            user={user}
-            authMode={authMode}
-            pendingVerificationEmail={pendingVerificationEmail}
-            email={email}
-            password={password}
-            confirmPassword={confirmPassword}
-            setAuthMode={setAuthMode}
-            setPendingVerificationEmail={setPendingVerificationEmail}
-            setEmail={setEmail}
-            setPassword={setPassword}
-            setConfirmPassword={setConfirmPassword}
-            onSignIn={handleSignIn}
-            onSignUp={handleSignUp}
-            onGoogleSignIn={handleGoogleSignIn}
-            onSignOut={handleSignOut}
-          />
-        )}
+        {page === 'account' && <AccountPage {...accountPageProps} />}
         {page === 'privacy' && <PrivacyPage />}
       </main>
       {showAuthPrompt && !signedIn && (
         <AuthPromptModal onClose={() => setShowAuthPrompt(false)}>
-          <AccountPage
-            user={user}
-            variant="modal"
-            authMode={authMode}
-            pendingVerificationEmail={pendingVerificationEmail}
-            email={email}
-            password={password}
-            confirmPassword={confirmPassword}
-            setAuthMode={setAuthMode}
-            setPendingVerificationEmail={setPendingVerificationEmail}
-            setEmail={setEmail}
-            setPassword={setPassword}
-            setConfirmPassword={setConfirmPassword}
-            onSignIn={handleSignIn}
-            onSignUp={handleSignUp}
-            onGoogleSignIn={handleGoogleSignIn}
-            onSignOut={handleSignOut}
-          />
+          <AccountPage {...accountPageProps} variant="modal" />
         </AuthPromptModal>
       )}
     </div>
@@ -623,7 +606,7 @@ function ExportPage(props: {
   );
 }
 
-function AccountPage(props: {
+type AccountPageProps = {
   user: UserProfile;
   variant?: 'page' | 'modal';
   authMode: 'signin' | 'signup';
@@ -640,7 +623,9 @@ function AccountPage(props: {
   onSignUp: () => void;
   onGoogleSignIn: () => void;
   onSignOut: () => void;
-}) {
+};
+
+function AccountPage(props: AccountPageProps) {
   const plan = getPlan(props.user.planId);
   const signedIn = isAuthenticated(props.user);
   const isModal = props.variant === 'modal';
