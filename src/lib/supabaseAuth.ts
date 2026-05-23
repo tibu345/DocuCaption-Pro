@@ -56,7 +56,7 @@ export async function signUpWithEmail(email: string, password: string): Promise<
   const signUp = await supabase.auth.signUp({
     email: normalizedEmail,
     password,
-    options: { emailRedirectTo: window.location.origin },
+    options: { emailRedirectTo: getAuthRedirectUrl() },
   });
   if (signUp.error) throw new Error(signUp.error.message);
 
@@ -85,9 +85,13 @@ export async function continueWithGoogle(): Promise<void> {
   if (!supabase) throw new Error('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.');
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin },
+    options: { redirectTo: getAuthRedirectUrl() },
   });
   if (error) throw new Error(error.message);
+}
+
+function getAuthRedirectUrl(): string {
+  return new URL(import.meta.env.BASE_URL, window.location.origin).toString();
 }
 
 export async function signOut(): Promise<UserProfile> {
