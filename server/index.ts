@@ -251,25 +251,22 @@ async function generateCaptionsHandler(req: express.Request, res: express.Respon
   }
 }
 
-app.get('/api/admin/usage', (_req, res) => {
-  res.json({
-    users: [],
-    note: 'Connect a database to list users, reset credits, change plans, and inspect failed processing jobs.',
-  });
+app.get('/api/admin/usage', async (req, res) => {
+  try {
+    const context = await getRequestContext(req);
+    if (!isAdminUser(context.user)) throw apiError(403, 'Admin access is required.');
+    res.json({
+      users: [],
+      note: 'Connect a database to list users, reset credits, change plans, and inspect failed processing jobs.',
+    });
+  } catch (error) {
+    sendApiError(res, error);
+  }
 });
 
 app.get('/api/health', (_req, res) => {
-  const provider = getCaptionProvider();
   res.json({
     ok: true,
-    captionProvider: provider,
-    geminiConfigured: isConfiguredSecret(process.env.GEMINI_API_KEY),
-    geminiModel: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
-    supabaseServerConfigured: Boolean(supabaseAdmin),
-    ollamaConfigured: Boolean(process.env.OLLAMA_BASE_URL && process.env.OLLAMA_MODEL),
-    ollamaBaseUrl: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
-    ollamaModel: process.env.OLLAMA_MODEL || 'llama3.2:1b',
-    envFilesLoaded: loadedEnvFiles,
   });
 });
 
@@ -334,6 +331,15 @@ function createAccountResponse(profile: ProfileRow): AccountResponse {
       billingPeriodEnd: profile.billing_period_end,
     },
   };
+}
+
+function isAdminUser(user: SupabaseUser): boolean {
+  const configuredAdmins = (process.env.ADMIN_USER_IDS ?? process.env.ADMIN_EMAILS ?? '')
+    .split(',')
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+  if (configuredAdmins.length === 0) return false;
+  return configuredAdmins.includes(user.id.toLowerCase()) || configuredAdmins.includes((user.email ?? '').toLowerCase());
 }
 
 function getProfilePlan(profile: ProfileRow) {

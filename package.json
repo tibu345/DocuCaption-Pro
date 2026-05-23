@@ -13,7 +13,8 @@
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
     "test:parser": "tsx scripts/parser-smoke-test.ts",
-    "test:docx": "tsx scripts/docx-export-regression.ts"
+    "test:docx": "tsx scripts/docx-export-regression.ts",
+    "test:security": "tsx scripts/security-smoke-test.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",
