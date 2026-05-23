@@ -44,7 +44,7 @@
   }
 
   .form-control {
-    @apply min-h-11 w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-base font-normal normal-case text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm;
+    @apply min-h-12 w-full rounded-md border border-slate-200 bg-white px-3 py-3 text-base font-normal normal-case text-slate-800 outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:min-h-11 sm:py-2.5 sm:text-sm;
   }
 
   .nav-pill {
@@ -76,11 +76,15 @@
   }
 
   .auth-card {
-    @apply space-y-6 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6 lg:p-7;
+    @apply min-w-0 space-y-5 rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:space-y-6 sm:p-6 lg:p-7;
+  }
+
+  .auth-card-modal {
+    @apply border-slate-100 shadow-none lg:p-6;
   }
 
   .google-button {
-    @apply min-h-12 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm transition-colors hover:bg-slate-50;
+    @apply min-h-12 w-full rounded-md border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm transition-colors hover:bg-slate-50 active:bg-slate-100;
   }
 
   .auth-divider {

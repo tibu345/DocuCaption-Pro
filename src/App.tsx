@@ -12,6 +12,7 @@ import {
   Trash2,
   Upload,
   User,
+  X,
 } from 'lucide-react';
 import { exportToDocxStructural, generateCaptions, generateLocalTestingCaptions, parseDocument } from './lib/documentProcessor';
 import type { DocElement, DocumentAudit, ProcessedDoc } from './lib/documentProcessor';
@@ -371,6 +372,7 @@ export default function App() {
         <AuthPromptModal onClose={() => setShowAuthPrompt(false)}>
           <AccountPage
             user={user}
+            variant="modal"
             authMode={authMode}
             pendingVerificationEmail={pendingVerificationEmail}
             email={email}
@@ -453,29 +455,29 @@ function CheckIcon() {
 
 function AuthPromptModal({ children, onClose }: { children: ReactNode; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/40 px-2 py-3 backdrop-blur-sm sm:px-4 sm:py-8" role="dialog" aria-modal="true" aria-label="Account sign in">
-      <div className="relative w-full max-w-5xl rounded-xl bg-slate-50 p-3 shadow-2xl ring-1 ring-white/30 sm:rounded-2xl sm:p-5">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/45 p-0 backdrop-blur-sm sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-label="Account sign in">
+      <div className="relative flex max-h-[calc(100dvh-0.75rem)] w-full max-w-4xl flex-col overflow-hidden rounded-t-2xl bg-slate-50 shadow-2xl ring-1 ring-white/30 sm:max-h-[calc(100dvh-2rem)] sm:rounded-2xl">
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3 top-3 z-10 min-h-10 rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-500 shadow-sm hover:text-slate-900 sm:right-4 sm:top-4"
+          className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:text-slate-900 sm:right-4 sm:top-4"
           aria-label="Continue without signing in for now"
         >
-          Later
+          <X className="h-4 w-4" />
         </button>
-        <div className="mb-4 overflow-hidden rounded-xl border border-blue-100 bg-white">
-          <div className="flex flex-col gap-4 bg-blue-50 px-4 py-4 pr-20 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+        <div className="shrink-0 border-b border-blue-100 bg-white">
+          <div className="flex min-w-0 flex-col gap-2 bg-blue-50 px-4 py-4 pr-16 sm:px-6 sm:py-5 sm:pr-20">
             <div className="min-w-0">
               <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Free account</p>
-              <p className="mt-1 text-sm leading-6 text-blue-950">Sign in once to process documents, generate captions, and export corrected Word files.</p>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-blue-950">Sign in once to process documents, generate captions, and export corrected Word files.</p>
             </div>
-            <div className="hidden gap-2 text-[10px] font-bold uppercase tracking-wider text-emerald-700 md:flex">
+            <div className="flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
               <span className="badge">Secure workspace</span>
               <span className="badge">Editable captions</span>
             </div>
           </div>
         </div>
-        {children}
+        <div className="overflow-y-auto p-3 sm:p-5">{children}</div>
       </div>
     </div>
   );
@@ -623,6 +625,7 @@ function ExportPage(props: {
 
 function AccountPage(props: {
   user: UserProfile;
+  variant?: 'page' | 'modal';
   authMode: 'signin' | 'signup';
   pendingVerificationEmail: string;
   email: string;
@@ -640,15 +643,16 @@ function AccountPage(props: {
 }) {
   const plan = getPlan(props.user.planId);
   const signedIn = isAuthenticated(props.user);
+  const isModal = props.variant === 'modal';
   return (
-    <section className="grid items-start gap-5 lg:grid-cols-[minmax(320px,420px)_minmax(0,1fr)] lg:gap-6">
-      <div className="auth-card">
+    <section className={`grid min-w-0 items-start gap-4 ${isModal ? 'lg:grid-cols-[minmax(0,390px)_minmax(0,1fr)]' : 'gap-5 lg:grid-cols-[minmax(320px,420px)_minmax(0,1fr)] lg:gap-6'}`}>
+      <div className={`auth-card ${isModal ? 'auth-card-modal' : ''}`}>
         <div>
-          <div className="w-11 h-11 rounded-lg bg-blue-600 text-white flex items-center justify-center mb-5">
+          <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white sm:mb-5 sm:h-11 sm:w-11">
             <User className="w-5 h-5" />
           </div>
-          <h2 className="text-xl font-bold sm:text-2xl">{signedIn ? 'Your account' : props.authMode === 'signup' ? 'Create your free account' : 'Sign in'}</h2>
-          <p className="mt-2 text-sm text-slate-600">
+          <h2 className="text-xl font-bold leading-tight sm:text-2xl">{signedIn ? 'Your account' : props.authMode === 'signup' ? 'Create your free account' : 'Sign in'}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
             {signedIn
               ? 'Manage your document automation usage.'
               : props.authMode === 'signup'
@@ -670,14 +674,14 @@ function AccountPage(props: {
         ) : (
           <div className="space-y-4">
             {props.pendingVerificationEmail && (
-              <div className="rounded-xl border border-blue-200 bg-blue-50 p-5 text-blue-950">
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-blue-950 sm:p-5">
+                <div className="flex flex-col gap-3 min-[380px]:flex-row min-[380px]:items-start">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
                     <CheckIcon />
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-sm font-bold">One quick step</h3>
-                    <p className="mt-1 text-sm leading-6">
+                    <p className="mt-1 break-words text-sm leading-6">
                       We sent a secure sign-in link to <strong>{props.pendingVerificationEmail}</strong>. Open it to finish setting up your account.
                     </p>
                     <div className="mt-3 grid gap-2 sm:flex sm:flex-wrap">
@@ -704,16 +708,18 @@ function AccountPage(props: {
               Continue with Google
             </button>
             <div className="auth-divider"><span>or use email</span></div>
-            <div className="grid grid-cols-2 gap-2 rounded-lg bg-slate-100 p-1">
+            <div className="grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1">
               <button
+                type="button"
                 onClick={() => props.setAuthMode('signup')}
-                className={`rounded-md px-3 py-2 text-sm font-semibold ${props.authMode === 'signup' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500'}`}
+                className={`min-h-10 rounded-md px-3 py-2 text-sm font-semibold transition-colors ${props.authMode === 'signup' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
               >
                 Sign up
               </button>
               <button
+                type="button"
                 onClick={() => props.setAuthMode('signin')}
-                className={`rounded-md px-3 py-2 text-sm font-semibold ${props.authMode === 'signin' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500'}`}
+                className={`min-h-10 rounded-md px-3 py-2 text-sm font-semibold transition-colors ${props.authMode === 'signin' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
               >
                 Sign in
               </button>
@@ -772,9 +778,9 @@ function AccountPage(props: {
           </div>
         </div>
       ) : (
-        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+        <div className={`rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6 ${isModal ? 'hidden lg:block' : ''}`}>
           <p className="text-xs font-bold uppercase tracking-widest text-blue-600 sm:text-sm">Document automation for Word</p>
-          <h1 className="mt-4 text-2xl font-bold leading-tight sm:text-4xl">Sign in to start fixing Word reports.</h1>
+          <h1 className={`${isModal ? 'mt-3 text-2xl' : 'mt-4 text-2xl sm:text-4xl'} font-bold leading-tight`}>Sign in to start fixing Word reports.</h1>
           <p className="mt-4 leading-7 text-slate-600">
             Your account keeps document usage, caption generation, and exports connected securely across sessions.
           </p>
