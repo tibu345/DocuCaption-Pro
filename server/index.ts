@@ -62,6 +62,7 @@ interface AccountResponse {
 
 const app = express();
 const port = Number(process.env.PORT ?? 8787);
+const host = process.env.HOST || '0.0.0.0';
 const requests = new Map<string, { count: number; resetAt: number }>();
 const supabaseAdmin = createSupabaseAdminClient();
 
@@ -272,8 +273,8 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`DocuCaption API listening on http://localhost:${port}`);
+app.listen(port, host, () => {
+  console.log(`DocuCaption API listening on http://${host}:${port}`);
 });
 
 function createSupabaseAdminClient(): SupabaseClient | undefined {
